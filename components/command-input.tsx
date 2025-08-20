@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Send, History, X, Copy, Check } from "lucide-react"
+// Removed incorrect import of 'process' as it is globally available
 
 interface CommandResult {
   commandId: string
@@ -34,7 +35,8 @@ export function CommandInput({ sessionId }: CommandInputProps) {
   useEffect(() => {
     if (!sessionId) return
 
-    const websocket = new WebSocket("ws://localhost:3001")
+    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:3001"
+    const websocket = new WebSocket(wsUrl)
 
     websocket.onopen = () => {
       websocket.send(

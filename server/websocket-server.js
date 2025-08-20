@@ -17,8 +17,9 @@ app.use(express.static("public"))
 // Generate agent script with session ID
 app.get("/agent.js", (req, res) => {
   const sessionId = req.query.session || uuidv4()
+  const serverUrl = process.env.SERVER_URL || "http://localhost:3001"
 
-  const agentLoader = `(function(){var s=document.createElement("script");s.src="http://localhost:3001/agent-full.js?session=${sessionId}";document.head.appendChild(s);})();`
+  const agentLoader = `(function(){var s=document.createElement("script");s.src="${serverUrl}/agent-full.js?session=${sessionId}";document.head.appendChild(s);})();`
 
   res.setHeader("Content-Type", "application/javascript")
   res.send(agentLoader)
@@ -26,11 +27,12 @@ app.get("/agent.js", (req, res) => {
 
 app.get("/agent-full.js", (req, res) => {
   const sessionId = req.query.session || uuidv4()
+  const wsUrl = process.env.WS_URL || "ws://localhost:3001"
 
   const agentScript = `
 (function() {
   const SESSION_ID = '${sessionId}';
-  const WS_URL = 'ws://localhost:3001';
+  const WS_URL = '${wsUrl}';
   
   let ws;
   let reconnectInterval;

@@ -24,7 +24,8 @@ export function SessionConnect({
   const [connectionError, setConnectionError] = useState<string | null>(null)
   const [retryCount, setRetryCount] = useState(0)
 
-  const agentCode = `(function(){var s=document.createElement("script");s.src="http://localhost:3001/agent.js?session=${sessionId}";document.head.appendChild(s);})();`
+  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001"
+  const agentCode = `(function(){var s=document.createElement("script");s.src="${serverUrl}/agent.js?session=${sessionId}";document.head.appendChild(s);})();`
 
   const copyToClipboard = async () => {
     try {
@@ -41,7 +42,8 @@ export function SessionConnect({
 
     setIsConnecting(true)
     setConnectionError(null)
-    const websocket = new WebSocket("ws://localhost:3001")
+    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:3001"
+    const websocket = new WebSocket(wsUrl)
 
     websocket.onopen = () => {
       websocket.send(
@@ -83,7 +85,7 @@ export function SessionConnect({
     websocket.onerror = (error) => {
       console.error("WebSocket error:", error)
       setIsConnecting(false)
-      setConnectionError("Failed to connect to WebSocket server. Make sure the server is running on port 3001.")
+      setConnectionError("Failed to connect to WebSocket server. Make sure the server is deployed and accessible.")
     }
   }
 
@@ -112,15 +114,19 @@ export function SessionConnect({
               <p className="text-xs text-red-300">{connectionError}</p>
               <div className="text-xs text-red-300/80">
                 <p>
-                  <strong>To fix this:</strong>
+                  <strong>For Production:</strong>
                 </p>
                 <ol className="list-decimal list-inside space-y-1 mt-1">
-                  <li>Open a terminal in your project directory</li>
+                  <li>Deploy the WebSocket server to Railway, Render, or Heroku</li>
+                  <li>Set NEXT_PUBLIC_WS_URL and NEXT_PUBLIC_SERVER_URL environment variables</li>
+                  <li>Redeploy your Vercel app with the new environment variables</li>
+                </ol>
+                <p className="mt-2">
+                  <strong>For Local Development:</strong>
+                </p>
+                <ol className="list-decimal list-inside space-y-1 mt-1">
                   <li>
                     Run: <code className="bg-red-500/20 px-1 rounded">npm run server</code>
-                  </li>
-                  <li>
-                    Or run both server and frontend: <code className="bg-red-500/20 px-1 rounded">npm run dev:all</code>
                   </li>
                   <li>Then click "Connect" again</li>
                 </ol>
@@ -149,10 +155,10 @@ export function SessionConnect({
           <strong>Server Status:</strong> {isConnected ? "🟢 Connected" : "🔴 Disconnected"}
         </p>
         <p>
-          <strong>Required:</strong> WebSocket server must be running on port 3001
+          <strong>WebSocket URL:</strong> {process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:3001"}
         </p>
         <p>
-          <strong>Start server:</strong> <code>npm run server</code> or <code>npm run dev:all</code>
+          <strong>Server URL:</strong> {process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001"}
         </p>
       </div>
 
