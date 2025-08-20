@@ -172,6 +172,10 @@ app.get("/health", (req, res) => {
   })
 })
 
+app.get("/ready", (req, res) => {
+  res.status(200).send("OK")
+})
+
 app.get("/", (req, res) => {
   res.json({
     message: "RemoteDebug WebSocket Server",
@@ -180,6 +184,7 @@ app.get("/", (req, res) => {
     endpoints: {
       agent: "/agent.js?session=SESSION_ID",
       health: "/health",
+      ready: "/ready",
     },
   })
 })
@@ -388,6 +393,10 @@ server.listen(PORT, HOST, () => {
 
   if (process.env.RAILWAY_PUBLIC_DOMAIN) {
     console.log("Railway deployment detected - server ready for traffic")
+  }
+
+  if (process.env.RAILWAY_PUBLIC_DOMAIN) {
+    console.log("RAILWAY_READY: Server is ready to accept traffic")
   }
 })
 
