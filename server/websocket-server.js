@@ -376,7 +376,41 @@ function handleDisconnect(ws) {
 }
 
 const PORT = process.env.PORT || 3001
-server.listen(PORT, "0.0.0.0", () => {
-  console.log(`RemoteDebug server running on port ${PORT}`)
+const HOST = process.env.HOST || "0.0.0.0"
+
+server.listen(PORT, HOST, () => {
+  console.log(`RemoteDebug server running on ${HOST}:${PORT}`)
   console.log(`Server available at: ${process.env.RAILWAY_PUBLIC_DOMAIN || `http://localhost:${PORT}`}`)
+  console.log(`Environment: ${process.env.NODE_ENV || "development"}`)
+  console.log(`Railway Domain: ${process.env.RAILWAY_PUBLIC_DOMAIN}`)
+
+  console.log("Server started successfully - ready to accept connections")
+
+  if (process.env.RAILWAY_PUBLIC_DOMAIN) {
+    console.log("Railway deployment detected - server ready for traffic")
+  }
+})
+
+server.on("error", (err) => {
+  console.error("Server error:", err)
+  if (err.code === "EADDRINUSE") {
+    console.error(`Port ${PORT} is already in use`)
+    process.exit(1)
+  }
+})
+
+process.on("SIGTERM", () => {
+  console.log("SIGTERM received, shutting down gracefully")
+  server.close(() => {
+    console.log("Server closed")
+    process.exit(0)
+  })
+})
+
+process.on("SIGINT", () => {
+  console.log("SIGINT received, shutting down gracefully")
+  server.close(() => {
+    console.log("Server closed")
+    process.exit(0)
+  })
 })
