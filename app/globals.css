@@ -4,74 +4,76 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #1f2937;
-  --foreground: #ffffff;
-  --card: #f1f5f9;
+  /* Updated to modern light theme design tokens */
+  --background: #ffffff;
+  --foreground: #1f2937;
+  --card: #f8fafc;
   --card-foreground: #1f2937;
-  --popover: #f1f5f9;
+  --popover: #ffffff;
   --popover-foreground: #1f2937;
-  --primary: #8b5cf6;
+  --primary: #374151;
   --primary-foreground: #ffffff;
-  --secondary: #6b7280;
+  --secondary: #6366f1;
   --secondary-foreground: #ffffff;
-  --muted: #6b7280;
-  --muted-foreground: #ffffff;
-  --accent: #8b5cf6;
+  --muted: #f8fafc;
+  --muted-foreground: #4b5563;
+  --accent: #6366f1;
   --accent-foreground: #ffffff;
-  --destructive: #be123c;
+  --destructive: #ea580c;
   --destructive-foreground: #ffffff;
-  --border: #4b5563;
-  --input: #ffffff;
-  --ring: rgba(139, 92, 246, 0.5);
-  --chart-1: #8b5cf6;
-  --chart-2: #f59e0b;
-  --chart-3: #3b82f6;
-  --chart-4: #10b981;
-  --chart-5: #ef4444;
-  --radius: 0.25rem;
-  --sidebar: #1f2937;
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: #8b5cf6;
+  --border: #e5e7eb;
+  --input: #f8fafc;
+  --ring: rgba(99, 102, 241, 0.5);
+  --chart-1: #6366f1;
+  --chart-2: #4b5563;
+  --chart-3: #ea580c;
+  --chart-4: #a16207;
+  --chart-5: #22c55e;
+  --radius: 0.5rem;
+  --sidebar: #f8fafc;
+  --sidebar-foreground: #1f2937;
+  --sidebar-primary: #374151;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #ffffff;
-  --sidebar-accent-foreground: #1f2937;
-  --sidebar-border: #4b5563;
-  --sidebar-ring: rgba(139, 92, 246, 0.5);
+  --sidebar-accent: #6366f1;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #e5e7eb;
+  --sidebar-ring: rgba(99, 102, 241, 0.5);
 }
 
 .dark {
-  --background: #1f2937;
-  --foreground: #ffffff;
-  --card: #374151;
-  --card-foreground: #ffffff;
-  --popover: #374151;
-  --popover-foreground: #ffffff;
-  --primary: #8b5cf6;
-  --primary-foreground: #ffffff;
-  --secondary: #6b7280;
+  /* Updated dark theme to complement the light theme */
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --card: #1e293b;
+  --card-foreground: #f1f5f9;
+  --popover: #1e293b;
+  --popover-foreground: #f1f5f9;
+  --primary: #475569;
+  --primary-foreground: #f1f5f9;
+  --secondary: #6366f1;
   --secondary-foreground: #ffffff;
-  --muted: #6b7280;
-  --muted-foreground: #ffffff;
-  --accent: #8b5cf6;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #6366f1;
   --accent-foreground: #ffffff;
-  --destructive: #be123c;
+  --destructive: #ea580c;
   --destructive-foreground: #ffffff;
-  --border: #4b5563;
-  --input: #374151;
-  --ring: rgba(139, 92, 246, 0.5);
-  --chart-1: #8b5cf6;
-  --chart-2: #f59e0b;
-  --chart-3: #3b82f6;
-  --chart-4: #10b981;
-  --chart-5: #ef4444;
-  --sidebar: #1f2937;
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: #8b5cf6;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #ffffff;
-  --sidebar-accent-foreground: #1f2937;
-  --sidebar-border: #4b5563;
-  --sidebar-ring: rgba(139, 92, 246, 0.5);
+  --border: #334155;
+  --input: #1e293b;
+  --ring: rgba(99, 102, 241, 0.5);
+  --chart-1: #6366f1;
+  --chart-2: #94a3b8;
+  --chart-3: #ea580c;
+  --chart-4: #a16207;
+  --chart-5: #22c55e;
+  --sidebar: #1e293b;
+  --sidebar-foreground: #f1f5f9;
+  --sidebar-primary: #475569;
+  --sidebar-primary-foreground: #f1f5f9;
+  --sidebar-accent: #6366f1;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #334155;
+  --sidebar-ring: rgba(99, 102, 241, 0.5);
 }
 
 @theme inline {
@@ -118,29 +120,82 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-sans;
+    /* Added modern typography with Montserrat and Open Sans */
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: "Open Sans", system-ui, -apple-system, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Montserrat", system-ui, -apple-system, sans-serif;
+    font-weight: 800;
   }
 }
 
-/* Added console-specific styles for better debugging experience */
+/* Enhanced console styles with modern typography and better colors */
 .console-log {
-  font-family: "Courier New", monospace;
+  font-family: "JetBrains Mono", "Fira Code", "Courier New", monospace;
   font-size: 13px;
-  line-height: 1.4;
+  line-height: 1.5;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin: 2px 0;
+  transition: all 0.2s ease;
+}
+
+.console-log:hover {
+  background-color: rgba(99, 102, 241, 0.05);
 }
 
 .console-log.error {
-  color: #ef4444;
+  color: #dc2626;
+  background-color: rgba(220, 38, 38, 0.1);
+  border-left: 3px solid #dc2626;
 }
 
 .console-log.warn {
-  color: #f59e0b;
+  color: #d97706;
+  background-color: rgba(217, 119, 6, 0.1);
+  border-left: 3px solid #d97706;
 }
 
 .console-log.info {
-  color: #3b82f6;
+  color: #2563eb;
+  background-color: rgba(37, 99, 235, 0.1);
+  border-left: 3px solid #2563eb;
 }
 
 .console-log.log {
-  color: #ffffff;
+  color: var(--foreground);
+  background-color: var(--muted);
+  border-left: 3px solid var(--border);
+}
+
+/* Added smooth animations and modern effects */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.glass-effect {
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.dark .glass-effect {
+  background-color: rgba(15, 23, 42, 0.8);
 }

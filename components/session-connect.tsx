@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Loader2, Plug, PlugZap, Copy, Check } from "lucide-react"
+import { Loader2, Copy, Check, AlertTriangle, Wifi, WifiOff } from "lucide-react"
 
 interface SessionConnectProps {
   sessionId: string
@@ -104,80 +104,132 @@ export function SessionConnect({
   }, [ws])
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {connectionError && (
-        <div className="rounded-md border border-red-500/20 bg-red-500/10 p-3">
-          <div className="flex items-start gap-2">
-            <div className="text-red-400">⚠️</div>
-            <div className="space-y-2">
-              <p className="text-sm text-red-400 font-medium">Connection Error</p>
-              <p className="text-xs text-red-300">{connectionError}</p>
-              <div className="text-xs text-red-300/80">
-                <p>
-                  <strong>For Production:</strong>
-                </p>
-                <ol className="list-decimal list-inside space-y-1 mt-1">
-                  <li>Deploy the WebSocket server to Railway, Render, or Heroku</li>
-                  <li>Set NEXT_PUBLIC_WS_URL and NEXT_PUBLIC_SERVER_URL environment variables</li>
-                  <li>Redeploy your Vercel app with the new environment variables</li>
-                </ol>
-                <p className="mt-2">
-                  <strong>For Local Development:</strong>
-                </p>
-                <ol className="list-decimal list-inside space-y-1 mt-1">
-                  <li>
-                    Run: <code className="bg-red-500/20 px-1 rounded">npm run server</code>
-                  </li>
-                  <li>Then click "Connect" again</li>
-                </ol>
+        <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-4 animate-slide-in">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
+            <div className="space-y-3 flex-1">
+              <p className="text-sm font-semibold text-destructive">Connection Failed</p>
+              <p className="text-xs text-destructive/80 leading-relaxed">{connectionError}</p>
+              <div className="text-xs text-destructive/70 space-y-3">
+                <div className="bg-destructive/10 rounded-lg p-3 border border-destructive/20">
+                  <p className="font-semibold mb-2">Production Setup:</p>
+                  <ol className="list-decimal list-inside space-y-1.5 text-xs">
+                    <li>Deploy WebSocket server to Railway, Render, or Heroku</li>
+                    <li>Configure NEXT_PUBLIC_WS_URL and NEXT_PUBLIC_SERVER_URL</li>
+                    <li>Redeploy your Vercel application</li>
+                  </ol>
+                </div>
+                <div className="bg-destructive/10 rounded-lg p-3 border border-destructive/20">
+                  <p className="font-semibold mb-2">Local Development:</p>
+                  <ol className="list-decimal list-inside space-y-1.5 text-xs">
+                    <li>
+                      Run: <code className="bg-destructive/20 px-2 py-0.5 rounded text-xs">npm run server</code>
+                    </li>
+                    <li>Click "Connect" to retry</li>
+                  </ol>
+                </div>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      <div className="flex gap-2">
+      <div className="flex gap-3">
         {!isConnected ? (
-          <Button onClick={connect} disabled={!sessionId.trim() || isConnecting} className="flex-1 gap-2">
-            {isConnecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plug className="h-4 w-4" />}
-            {isConnecting ? "Connecting..." : "Connect"}
+          <Button
+            onClick={connect}
+            disabled={!sessionId.trim() || isConnecting}
+            className="flex-1 gap-3 h-12 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50"
+          >
+            {isConnecting ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Establishing Connection...
+              </>
+            ) : (
+              <>
+                <Wifi className="h-5 w-5" />
+                Connect to Session
+              </>
+            )}
           </Button>
         ) : (
-          <Button onClick={disconnect} variant="destructive" className="flex-1 gap-2">
-            <PlugZap className="h-4 w-4" />
-            Disconnect
+          <Button
+            onClick={disconnect}
+            variant="destructive"
+            className="flex-1 gap-3 h-12 font-semibold transition-all duration-200 shadow-lg hover:shadow-xl"
+          >
+            <WifiOff className="h-5 w-5" />
+            Disconnect Session
           </Button>
         )}
       </div>
 
-      <div className="text-xs text-muted-foreground bg-muted/50 rounded p-2">
-        <p>
-          <strong>Server Status:</strong> {isConnected ? "🟢 Connected" : "🔴 Disconnected"}
-        </p>
-        <p>
-          <strong>WebSocket URL:</strong> {process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:3001"}
-        </p>
-        <p>
-          <strong>Server URL:</strong> {process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001"}
-        </p>
+      <div className="bg-muted/30 rounded-xl p-4 border border-border/30 space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-foreground">Connection Status</span>
+          <div
+            className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${
+              isConnected
+                ? "bg-green-500/10 text-green-600 border border-green-500/20"
+                : "bg-muted text-muted-foreground border border-border/30"
+            }`}
+          >
+            <div
+              className={`h-2 w-2 rounded-full ${isConnected ? "bg-green-500 animate-pulse" : "bg-muted-foreground"}`}
+            />
+            {isConnected ? "Connected" : "Disconnected"}
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-2 text-xs">
+          <div className="flex justify-between items-center py-1">
+            <span className="text-muted-foreground">WebSocket:</span>
+            <code className="bg-background/50 px-2 py-1 rounded text-xs font-mono">
+              {process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:3001"}
+            </code>
+          </div>
+          <div className="flex justify-between items-center py-1">
+            <span className="text-muted-foreground">Server:</span>
+            <code className="bg-background/50 px-2 py-1 rounded text-xs font-mono">
+              {process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001"}
+            </code>
+          </div>
+        </div>
       </div>
 
       {sessionId && (
-        <div className="space-y-2">
+        <div className="space-y-3 animate-slide-in">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium text-muted-foreground">Agent Code</h3>
-            <Button onClick={copyToClipboard} size="sm" variant="ghost" className="h-8 gap-1">
-              {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-              {copied ? "Copied!" : "Copy"}
+            <h3 className="text-sm font-semibold text-foreground">Injection Code</h3>
+            <Button
+              onClick={copyToClipboard}
+              size="sm"
+              variant="ghost"
+              className="h-8 gap-2 hover:bg-secondary/10 transition-all duration-200"
+            >
+              {copied ? (
+                <>
+                  <Check className="h-3.5 w-3.5 text-green-500" />
+                  <span className="text-green-600 font-medium">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="h-3.5 w-3.5" />
+                  Copy Code
+                </>
+              )}
             </Button>
           </div>
-          <div className="relative">
-            <pre className="bg-console-bg border border-console-border rounded-md p-3 text-xs text-console-text font-mono overflow-x-auto">
-              <code>{agentCode}</code>
+          <div className="relative group">
+            <pre className="bg-background/50 border border-border/30 rounded-xl p-4 text-xs font-mono overflow-x-auto transition-all duration-200 group-hover:border-secondary/30">
+              <code className="text-foreground/90">{agentCode}</code>
             </pre>
+            <div className="absolute inset-0 bg-gradient-to-r from-secondary/5 to-accent/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
           </div>
-          <p className="text-xs text-muted-foreground">
-            Paste this code into your website's console or add it to your HTML to start debugging.
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Paste this code into any website's browser console to establish a debugging connection.
           </p>
         </div>
       )}
