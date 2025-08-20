@@ -165,28 +165,15 @@ app.get("/agent-full.js", (req, res) => {
 })
 
 app.get("/health", (req, res) => {
-  res.status(200).json({
-    status: "healthy",
-    timestamp: new Date().toISOString(),
-    sessions: sessions.size,
-  })
-})
-
-app.get("/ready", (req, res) => {
   res.status(200).send("OK")
 })
 
+app.get("/ready", (req, res) => {
+  res.status(200).send("READY")
+})
+
 app.get("/", (req, res) => {
-  res.json({
-    message: "RemoteDebug WebSocket Server",
-    status: "running",
-    sessions: sessions.size,
-    endpoints: {
-      agent: "/agent.js?session=SESSION_ID",
-      health: "/health",
-      ready: "/ready",
-    },
-  })
+  res.status(200).send("RemoteDebug Server Running")
 })
 
 // Store active sessions and connections
