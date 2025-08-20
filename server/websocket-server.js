@@ -372,18 +372,15 @@ const HOST = process.env.HOST || "0.0.0.0"
 
 server.listen(PORT, HOST, () => {
   console.log(`RemoteDebug server running on ${HOST}:${PORT}`)
-  console.log(`Server available at: ${process.env.RAILWAY_PUBLIC_DOMAIN || `http://localhost:${PORT}`}`)
+  const renderUrl = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`
+  console.log(`Server available at: ${renderUrl}`)
   console.log(`Environment: ${process.env.NODE_ENV || "development"}`)
-  console.log(`Railway Domain: ${process.env.RAILWAY_PUBLIC_DOMAIN}`)
 
   console.log("Server started successfully - ready to accept connections")
 
-  if (process.env.RAILWAY_PUBLIC_DOMAIN) {
-    console.log("Railway deployment detected - server ready for traffic")
-  }
-
-  if (process.env.RAILWAY_PUBLIC_DOMAIN) {
-    console.log("RAILWAY_READY: Server is ready to accept traffic")
+  if (process.env.RENDER_EXTERNAL_URL) {
+    console.log("Render deployment detected - server ready for traffic")
+    console.log("RENDER_READY: Server is ready to accept traffic")
   }
 })
 
