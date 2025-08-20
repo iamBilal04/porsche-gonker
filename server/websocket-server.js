@@ -27,7 +27,7 @@ app.use(express.static("public"))
 // Generate agent script with session ID
 app.get("/agent.js", (req, res) => {
   const sessionId = req.query.session || uuidv4()
-  const serverUrl = process.env.SERVER_URL || "http://localhost:3001"
+  const serverUrl = process.env.RENDER_EXTERNAL_URL || process.env.SERVER_URL || "http://localhost:3001"
 
   const agentLoader = `(function(){var s=document.createElement("script");s.src="${serverUrl}/agent-full.js?session=${sessionId}";document.head.appendChild(s);})();`
 
@@ -37,7 +37,8 @@ app.get("/agent.js", (req, res) => {
 
 app.get("/agent-full.js", (req, res) => {
   const sessionId = req.query.session || uuidv4()
-  const wsUrl = process.env.WS_URL || "ws://localhost:3001"
+  const renderUrl = process.env.RENDER_EXTERNAL_URL
+  const wsUrl = renderUrl ? renderUrl.replace("https://", "wss://") : process.env.WS_URL || "ws://localhost:3001"
 
   const agentScript = `
 (function() {
