@@ -21,6 +21,8 @@ export function SessionConnect({
   const [isConnected, setIsConnected] = useState(false)
   const [ws, setWs] = useState<WebSocket | null>(null)
   const [copied, setCopied] = useState(false)
+  const [connectionError, setConnectionError] = useState<string | null>(null)
+  const [retryCount, setRetryCount] = useState(0)
 
   const agentCode = `(function(){var s=document.createElement("script");s.src="http://localhost:3001/agent.js?session=${sessionId}";document.head.appendChild(s);})();`
 
@@ -38,6 +40,7 @@ export function SessionConnect({
     if (!sessionId.trim()) return
 
     setIsConnecting(true)
+    setConnectionError(null)
     const websocket = new WebSocket("ws://localhost:3001")
 
     websocket.onopen = () => {
@@ -50,6 +53,8 @@ export function SessionConnect({
       setWs(websocket)
       setIsConnected(true)
       setIsConnecting(false)
+      setRetryCount(0)
+      setConnectionError(null)
       onConnectionChange(true)
     }
 
@@ -78,6 +83,7 @@ export function SessionConnect({
     websocket.onerror = (error) => {
       console.error("WebSocket error:", error)
       setIsConnecting(false)
+      setConnectionError("Failed to connect to WebSocket server. Make sure the server is running on port 3001.")
     }
   }
 
@@ -97,6 +103,33 @@ export function SessionConnect({
 
   return (
     <div className="space-y-4">
+      {connectionError && (
+        <div className="rounded-md border border-red-500/20 bg-red-500/10 p-3">
+          <div className="flex items-start gap-2">
+            <div className="text-red-400">⚠️</div>
+            <div className="space-y-2">
+              <p className="text-sm text-red-400 font-medium">Connection Error</p>
+              <p className="text-xs text-red-300">{connectionError}</p>
+              <div className="text-xs text-red-300/80">
+                <p>
+                  <strong>To fix this:</strong>
+                </p>
+                <ol className="list-decimal list-inside space-y-1 mt-1">
+                  <li>Open a terminal in your project directory</li>
+                  <li>
+                    Run: <code className="bg-red-500/20 px-1 rounded">npm run server</code>
+                  </li>
+                  <li>
+                    Or run both server and frontend: <code className="bg-red-500/20 px-1 rounded">npm run dev:all</code>
+                  </li>
+                  <li>Then click "Connect" again</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex gap-2">
         {!isConnected ? (
           <Button onClick={connect} disabled={!sessionId.trim() || isConnecting} className="flex-1 gap-2">
@@ -109,6 +142,18 @@ export function SessionConnect({
             Disconnect
           </Button>
         )}
+      </div>
+
+      <div className="text-xs text-muted-foreground bg-muted/50 rounded p-2">
+        <p>
+          <strong>Server Status:</strong> {isConnected ? "🟢 Connected" : "🔴 Disconnected"}
+        </p>
+        <p>
+          <strong>Required:</strong> WebSocket server must be running on port 3001
+        </p>
+        <p>
+          <strong>Start server:</strong> <code>npm run server</code> or <code>npm run dev:all</code>
+        </p>
       </div>
 
       {sessionId && (
