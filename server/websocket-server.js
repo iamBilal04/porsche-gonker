@@ -18,6 +18,15 @@ app.use(express.static("public"))
 app.get("/agent.js", (req, res) => {
   const sessionId = req.query.session || uuidv4()
 
+  const agentLoader = `(function(){var s=document.createElement("script");s.src="http://localhost:3001/agent-full.js?session=${sessionId}";document.head.appendChild(s);})();`
+
+  res.setHeader("Content-Type", "application/javascript")
+  res.send(agentLoader)
+})
+
+app.get("/agent-full.js", (req, res) => {
+  const sessionId = req.query.session || uuidv4()
+
   const agentScript = `
 (function() {
   const SESSION_ID = '${sessionId}';
