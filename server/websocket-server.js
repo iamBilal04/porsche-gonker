@@ -6,10 +6,20 @@ const path = require("path")
 
 const app = express()
 const server = createServer(app)
-const wss = new WebSocketServer({ server })
-//gsgsigi
-// Store active sessions and connections
-const sessions = new Map() // sessionId -> { clientWs, viewerWs, logs: [] }
+const wss = new WebSocketServer({
+  server,
+  verifyClient: (info) => {
+    // Allow all origins for WebSocket connections
+    return true
+  },
+})
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*")
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+  next()
+})
 
 // Serve static files
 app.use(express.static("public"))
@@ -153,6 +163,29 @@ app.get("/agent-full.js", (req, res) => {
   res.setHeader("Content-Type", "application/javascript")
   res.send(agentScript)
 })
+
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+    sessions: sessions.size,
+  })
+})
+
+app.get("/", (req, res) => {
+  res.json({
+    message: "RemoteDebug WebSocket Server",
+    status: "running",
+    sessions: sessions.size,
+    endpoints: {
+      agent: "/agent.js?session=SESSION_ID",
+      health: "/health",
+    },
+  })
+})
+
+// Store active sessions and connections
+const sessions = new Map() // sessionId -> { clientWs, viewerWs, logs: [] }
 
 // WebSocket connection handling
 wss.on("connection", (ws) => {
@@ -343,7 +376,7 @@ function handleDisconnect(ws) {
 }
 
 const PORT = process.env.PORT || 3001
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`RemoteDebug server running on port ${PORT}`)
-  console.log(`Agent script available at: http://localhost:${PORT}/agent.js?session=YOUR_SESSION_ID`)
+  console.log(`Server available at: ${process.env.RAILWAY_PUBLIC_DOMAIN || `http://localhost:${PORT}`}`)
 })
